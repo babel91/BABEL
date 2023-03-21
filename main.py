@@ -2,11 +2,27 @@
 import random
 import settings
 import discord
+
 from discord.ext import commands
 
 
 logger = settings.logging.getLogger("bot")
 
+class Slapper(commands.Converter):
+
+    use_nicknames : bool
+
+    def __init__(self, *, use_nicknames) -> None:
+        self.use_nicknames = use_nicknames
+
+    async def convert(self,ctx,argument):
+        someone = random.choice(ctx.guild.members)
+        nickname = ctx.author
+        if self.use_nicknames:
+            nickname = ctx.author.nick
+        else:
+            nickname = ctx.author
+        return f"{nickname} slaps {someone} with {argument}"
 
 def run():
     intents = discord.Intents.default()
@@ -20,43 +36,22 @@ def run():
         logger.info(f"User {bot.user}(ID: {bot.user.id})")
 
         channel = bot.get_channel(int(settings.CH_BOTS))
-        await channel.send("Hello, I'm back!")
-
-    @bot.command(
-            
-            #aliases=['p'],
-            help = "This is hälp",
-            description = "This is description",
-            brief = "This is brief",
-            enabled = True,
-            hidden = False
-    )
-
-    async def ping(ctx):
-        """Answers with pong"""
-        await ctx.send("pong")
+        await channel.send("Hello, I'm back!"),
+    
+    @bot.command()
+    async def add(ctx, one : int , two : int):
+        """Adds two numbers"""
+        await ctx.send(one + two)       
+    
+    @bot.command()
+    async def joined(ctx, who : discord.Member):
+        """Adds two numbers"""
+        await ctx.send(who.joined_at)
 
     @bot.command()
-    async def say(ctx, what = "WHAT?!"):
-        """WHAT?!"""
-        await ctx.send("what")
+    async def slap(ctx, tool : Slapper(use_nicknames=False)):
+        await ctx.send(tool)
 
-    @bot.command()
-    async def say2(ctx, *what):
-        """what"""
-        await ctx.send(" ".join(what))
-
-    @bot.command()
-    async def say3(ctx, what = "WHAT?!", why = "WHY?"):
-        """WHAT?! WHY?"""
-        await ctx.send(what + why)
-
-    @bot.command()
-    async def choises(ctx, *options):
-        """Random shit"""
-        await ctx.send(random.choice(options))
-        
-        
 
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 
