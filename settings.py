@@ -9,7 +9,6 @@ load_dotenv()
 DISCORD_API_SECRET = os.getenv("DISCORD_API_TOKEN")
 CH_BOTS = os.getenv("CH_BOTS")
 
-
 LOGGING_CONFIG = {
     "version": 1,
     "disabled_existing_loggers": False, 
@@ -55,5 +54,6 @@ LOGGING_CONFIG = {
     }
     
 }
+
 
 dictConfig(LOGGING_CONFIG)
