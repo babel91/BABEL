@@ -75,7 +75,17 @@ def run(): #Commands
     @bot.command()
     async def add(ctx, one : int , two : int):
         """Adds two numbers"""
-        await ctx.send(one + two)       
+        await ctx.send(one + two)
+
+    @bot.error
+    async def add_error(ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("handled error locally")
+
+    # @bot.error
+    # async def add_error(ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument):
+    #         await ctx.send("handled error locally")     
     
     @bot.command()
     async def joined(ctx, who : discord.Member):
@@ -91,25 +101,10 @@ def run(): #Commands
         """Clears given number of messages"""
         await ctx.channel.purge(limit=amount+1)
 
-
-    @bot.event
-    async def on_ready():
-        logger.info(f"User: {bot.user} (ID: {bot.user.id})")
-
     @bot.event
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("handled error globally")
-
-    @bot.event
-    async def add(ctx, one : int , two : int):
-        await ctx.send(one + two)
-
-    # @bot.error
-    # async def add_error(ctx, error):
-    #     if isinstance(error, commands.MissingRequiredArgument):
-    #         await ctx.send("handled error locally")
-
+            await ctx.send("Oops, something went wrong")
 
     
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
