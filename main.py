@@ -37,7 +37,7 @@ def run(): #Commands
 
         logger.info(f"User {bot.user}(ID: {bot.user.id})")
 
-        channel = bot.get_channel(int(settings.CH_BOTS))
+        channel = bot.get_channel(int(settings.CH_DMP))
         await channel.send("Hello, I'm back!"),
     
     @bot.command(
@@ -77,15 +77,10 @@ def run(): #Commands
         """Adds two numbers"""
         await ctx.send(one + two)
 
-    @bot.error
-    async def add_error(ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("handled error locally")
-
     # @bot.error
     # async def add_error(ctx, error):
     #     if isinstance(error, commands.MissingRequiredArgument):
-    #         await ctx.send("handled error locally")     
+    #         await ctx.send("handled error locally")  
     
     @bot.command()
     async def joined(ctx, who : discord.Member):

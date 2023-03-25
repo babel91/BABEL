@@ -8,6 +8,7 @@ load_dotenv()
 
 DISCORD_API_SECRET = os.getenv("DISCORD_API_TOKEN")
 CH_BOTS = os.getenv("CH_BOTS")
+CH_DMP = os.getenv("CH_DMP")
 
 LOGGING_CONFIG = {
     "version": 1,
