@@ -15,10 +15,10 @@ LOGGING_CONFIG = {
     "disabled_existing_loggers": False, 
     "formatters":{  
         "verbose":{
-            "format": "%(levelname)-10s - %(asctime)s - %(module)-15s %(message)-s"
+            "format": "%(levelname)-7s - %(name)-15s - %(asctime) 23s - %(funcName)s - %(module)-9s - %(message)-s"
         },
         "standard":{
-            "format": "%(levelname)-10s - %(name)-15s : %(message)s"
+            "format": "%(levelname)-7s - %(name)-15s : %(message)s"
         }
     },
     "handlers":{
@@ -29,6 +29,11 @@ LOGGING_CONFIG = {
         },
         "console2":{
             'level':"WARNING",
+            'class':"logging.StreamHandler",
+            'formatter': "standard"
+        },
+        "console3":{
+            'level':"ERROR",
             'class':"logging.StreamHandler",
             'formatter': "standard"
         },

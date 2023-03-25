@@ -4,6 +4,9 @@ import random
 import settings
 import discord
 
+# import error_handling
+# import bot_commands
+
 from discord.ext import commands
 
 
@@ -37,7 +40,7 @@ def run(): #Commands
 
         logger.info(f"User {bot.user}(ID: {bot.user.id})")
 
-        channel = bot.get_channel(int(settings.CH_DMP))
+        channel = bot.get_channel(int(settings.CH_BOTS))
         await channel.send("Hello, I'm back!"),
     
     @bot.command(
@@ -107,5 +110,7 @@ def run(): #Commands
 
 if __name__ == "__main__":
     run()
+
+
 
 
