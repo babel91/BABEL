@@ -3,12 +3,17 @@
 import random
 import settings
 import discord
+import openai
 
 # import error_handling
 # import bot_commands
 
+
+
 from discord.ext import commands
 
+intents = discord.Intents().all()
+client = discord.Client(intents=intents)
 
 logger = settings.logging.getLogger("bot")
 
@@ -28,12 +33,42 @@ class Slapper(commands.Converter):
             nickname = ctx.author
         return f"{nickname} slaps {someone} with {argument}"
 
+def generate_response(prompt):
+    response = openai.Completion.create(
+        engine="davinci",
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.7,
+    )
+    message = response.choices[0].text.strip()
+    return message
 
-def run(): #Commands
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+        
+    if message.content.startswith("!chat"):
+        prompt = message.content.replace("!chat", "")
+        response = generate_response(prompt)
+        await message.channel.send(response)
+
+
+    client.run(settings.OPENAI_API_KEY)
+
+
+
+
+
+
+def run(): 
     intents = discord.Intents.default()
     intents.message_content = True 
 
-    bot = commands.Bot(command_prefix=".", intents=intents)
+    bot = commands.Bot(command_prefix="!", intents=intents)
+
     
     @bot.event
     async def on_ready():
@@ -104,8 +139,14 @@ def run(): #Commands
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send("Oops, something went wrong")
 
-    
+
+
+
+
     bot.run(settings.DISCORD_API_SECRET, root_logger=True)
+
+
+    
 
 
 if __name__ == "__main__":
