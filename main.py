@@ -113,7 +113,7 @@ def run():
     bot.run(settings.DISCORD_API_SECRET, reconnect=True)
     
 
-#TEST
+#TESTar
 
 if __name__ == "__main__":
     run()
