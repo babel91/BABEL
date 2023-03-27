@@ -1,9 +1,19 @@
+
+
 import random
 import settings
 import discord
 import openai
 
+# import error_handling
+# import bot_commands
+
+
+
 from discord.ext import commands
+
+intents = discord.Intents().all()
+client = discord.Client(intents=intents)
 
 logger = settings.logging.getLogger("bot")
 
@@ -35,11 +45,29 @@ def generate_response(prompt):
     message = response.choices[0].text.strip()
     return message
 
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+        
+    if message.content.startswith("!chat"):
+        prompt = message.content.replace("!chat", "")
+        response = generate_response(prompt)
+        await message.channel.send(response)
+
+
+    client.run(settings.OPENAI_API_KEY)
+
+
+
+
+
+
 def run(): 
     intents = discord.Intents.default()
     intents.message_content = True 
 
-    bot = commands.Bot(command_prefix="!", intents=intents, logging=logger)
+    bot = commands.Bot(command_prefix="!", intents=intents)
 
     
     @bot.event
@@ -61,6 +89,36 @@ def run():
     async def ping(ctx):
         """Answers with pong"""
         await ctx.send("pong")
+
+    @bot.command()
+    async def say(ctx, what = "WHAT?!"):
+        """WHAT?!"""
+        await ctx.send("what")
+
+    @bot.command()
+    async def say2(ctx, *what):
+        """what"""
+        await ctx.send(" ".join(what))
+
+    @bot.command()
+    async def say3(ctx, what = "WHAT?!", why = "WHY?"):
+        """WHAT?! WHY?"""
+        await ctx.send(what + why)
+
+    @bot.command()
+    async def choises(ctx, *options):
+        """Random shit"""
+        await ctx.send(random.choice(options))
+    
+    @bot.command()
+    async def add(ctx, one : int , two : int):
+        """Adds two numbers"""
+        await ctx.send(one + two)
+
+    # @bot.error
+    # async def add_error(ctx, error):
+    #     if isinstance(error, commands.MissingRequiredArgument):
+    #         await ctx.send("handled error locally")  
     
     @bot.command()
     async def joined(ctx, who : discord.Member):
@@ -76,45 +134,24 @@ def run():
         """Clears given number of messages"""
         await ctx.channel.purge(limit=amount+1)
 
-    @bot.command()
-    async def chat(ctx, *prompt):
-        # Join the prompt arguments into a single string
-        prompt_text = " ".join(prompt)
-
-        # Generate response using GPT
-        response = generate_response(prompt_text)
-        if len(response) <= 2000:
-            await ctx.send(response)
-        else:
-            # break response into smaller chunks of 2000 characters or less
-            for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
-                await ctx.send(chunk)
-
-        # Send the response message back to the channel
-        await ctx.send(response)
-    # async def chat(ctx, *prompt):
-    #     response = generate_response(prompt)
-    #     if len(response) <= 2000:
-    #         await ctx.send(response)
-    #     else:
-    #     # break response into smaller chunks of 2000 characters or less
-    #         for chunk in [response[i:i+2000] for i in range(0, len(response), 2000)]:
-    #             await ctx.send(chunk)
+    @bot.event
+    async def on_command_error(ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("Oops, something went wrong")
 
 
 
 
 
-    # @bot.event
-    # async def on_command_error(ctx, error):
-    #     if isinstance(error, commands.MissingRequiredArgument):
-    #         await ctx.send("Oops, something went wrong")
+    bot.run(settings.DISCORD_API_SECRET, root_logger=True)
 
-    bot.run(settings.DISCORD_API_SECRET, reconnect=True)
+
     
+
 
 if __name__ == "__main__":
     run()
+
 
 
 
